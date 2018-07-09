@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="colorPrimary">#5d4037</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <!--Coffee Theme Color-->
+    <color name="primary">#795548</color>
+    <color name="primary_dark">#5D4037</color>
+    <color name="primary_light">#d7ccc8</color>
+    <color name="accent">#ff5722</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="icons">#ffffff</color>
+    <color name="divider">#bdbdbd</color>
+    <color name="end_color">#f0c27b</color>
+    <color name="start_color">#4B1248</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="powerder">#c2d2d7</color>
+</resources>

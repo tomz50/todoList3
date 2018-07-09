@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="items">
+        <item>綠色</item>
+        <item>藍色</item>
+        <item>橘色</item>
+        <item>紫色</item>
+        <item>紅色</item>
+    </array>
+</resources>
