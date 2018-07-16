@@ -22,8 +22,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Calendar;
 
 public class EditActivity extends AppCompatActivity implements View.OnClickListener {
@@ -32,9 +34,9 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     EditText edt_name, edt_alarm;
     Button btn_alarm,btn_ok,btn_back;
     TextView txtTitle;
-    public String new_name, new_color, new_alarm;
+    public String new_name, new_alarm;
     public Bundle bData;
-    public int index;
+    int index;
 
     private Button dateButton;
     private Calendar calendar;
@@ -42,10 +44,12 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private TextView dateText;
     private DatePickerDialog datePickerDialog;
     Spinner spinner;
+    Spinner etd_color;
+    SpinnerAdapter spinnerAdapter;
+    String selected_color;
     ArrayAdapter<CharSequence> data;
     ArrayList<ColorItem> colorItems;
-    SpinnerAdapter spinnerAdapter;
-
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,17 +62,17 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         colorItems.add(new ColorItem("Red","#ff0000"));
         colorItems.add(new ColorItem("Green","#00c7a4"));
         colorItems.add(new ColorItem("Blue","#4b7bd8"));
-        colorItems.add(new ColorItem("DarkViolet","#9400D3"));
+        colorItems.add(new ColorItem("Orange","#fc8200"));
         spinnerAdapter = new SpinnerAdapter(this,colorItems);
         spinner.setAdapter(spinnerAdapter);
 
-/*
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 ImageView img = ((view.findViewById(R.id.ticket)));
                 ColorDrawable drawable = (ColorDrawable) img.getBackground();
                 selected_color = Integer.toHexString(drawable.getColor()).substring(2);
+				//共10碼，前面2碼為區分是否為透明色，選後面8碼色票即可
                 Log.i("Selected_color=",selected_color);
             }
 
@@ -77,8 +81,6 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-
-*/
         calendar = Calendar.getInstance();
         mYear = calendar.get(Calendar.YEAR);
         mMonth = calendar.get(Calendar.MONTH);
@@ -98,12 +100,12 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         dbAdapter = new DbAdapter(this);
 
         if(bData.getString("type").equals("edit")){
-            txtTitle.setText("編輯聯絡人");
-     //         Log.i("DB_DbAdapter_queryByName",item_id);
-            Cursor cursor = dbAdapter.queryById(bData.getInt("item_id"));
-            index = cursor.getInt(0);
-            edt_name.setText(cursor.getString(1));
-            edt_alarm.setText(cursor.getString(2));
+            txtTitle.setText("編輯便條");
+            index = bData.getInt("item_id");
+            Cursor cursor = dbAdapter.queryById(index);
+            edt_name.setText(cursor.getString(2));
+            edt_alarm.setText(cursor.getString(3));
+            // sp_color.setSelection(cursor.getString(4));
         }
         //按鈕行為設定
         edt_alarm.setOnClickListener(this);
@@ -116,7 +118,6 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.del_menu,menu);
         return true;
-//        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -149,7 +150,6 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
     private void initView(){
         txtTitle = findViewById(R.id.txtTitle);
         edt_name = findViewById(R.id.edtName);
-        //etd_color = findViewById(R.id.etd_color);
         edt_alarm = findViewById(R.id.edt_alarm);
         btn_ok = findViewById(R.id.btn_ok);
         btn_back = findViewById(R.id.btn_back);
@@ -176,22 +176,22 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                 + String.valueOf(dayOfMonth);
     }
 
-
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.edtName:
+                if(bData.getString("type").equals("add")) edt_name.setText("");
+                break;
+
             case R.id.btn_ok:
                 new_name = edt_name.getText().toString();
-                //new_color = etd_color.getText().toString();
+                Log.i("memo=",new_name);
                 new_alarm = edt_alarm.getText().toString();
-
-                dbAdapter = new DbAdapter(EditActivity.this);
+                String currentTime = df.format(new Date(System.currentTimeMillis()));
                 if(bData.getString("type").equals("add")){
                     try{
-                        //dbAdapter.createContacts(new_name, "Green", "1980/02/16");
-                        dbAdapter.createContacts(new_name,  new_alarm);
-                        //dbAdapter.createContacts(new_name, new_color, new_alarm);
+                        dbAdapter.createContacts(currentTime, new_name, new_alarm, selected_color);
+                        //dbAdapter.createContacts(currentTime, new_name, null, selected_color);
                     }catch (Exception e){
                         e.printStackTrace();
                     }finally {
@@ -202,13 +202,13 @@ public class EditActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     try{
                         Log.i("DB_EditActivity","onClick1");
-                        dbAdapter.updateContacts(index, new_name, new_alarm);
-                        Log.i("DB_EditActivity","onClick2");
+                        dbAdapter.updateContacts(index, currentTime, new_name, new_alarm, selected_color);
+               		Log.i("DB_EditActivity","onClick2");
                     }catch(Exception e){
                         e.printStackTrace();
                     }finally {
                         Log.i("DB_EditActivity","onClick3");
-                        Intent i = new Intent(this, ShowActivity.class);
+                        Intent i = new Intent(this, MainActivity.class);
                         i.putExtra("item_id",index);
                         startActivity(i);
                     }

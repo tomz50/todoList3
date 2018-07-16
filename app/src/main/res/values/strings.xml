@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">便條紙APP</string>
-    <string name="title_activity_show">ShowActivity</string>
     <string name="title_activity_edit">EditActivity</string>
     <string name="select_region_dialog_title">Spinner 對話視窗標題</string>
 </resources>

@@ -40,7 +40,7 @@ public class SpinnerAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         ColorItem colorItem = (ColorItem) getItem(position);
         View v = inflater.inflate(R.layout.color_view,null);
-        ImageView ticket = v.findViewById(R.id.imageView);
+        ImageView ticket = v.findViewById(R.id.ticket);
         TextView color_name = v.findViewById(R.id.color_name);
         ticket.setBackgroundColor(Color.parseColor(colorItem.code));
         color_name.setText(colorItem.name);

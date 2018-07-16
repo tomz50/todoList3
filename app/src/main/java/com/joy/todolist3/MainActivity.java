@@ -15,16 +15,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
-
-import java.util.ArrayList;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private ListView listData;
+    ListView listData;
+    TextView noContact;
     private DbAdapter dbAdapter;
-    private SimpleCursorAdapter dataAdapter;
     private Intent intent;
+    private ListAdapter dataAdapter;
     private ImageButton edit;
     private ArrayAdapter<String> arrayList;
     private Context mContext;
@@ -37,39 +35,34 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dbAdapter = new DbAdapter(this);
+        Log.i("dbCount=",String.valueOf(dbAdapter.listContacts().getCount()));
+        noContact = findViewById(R.id.noContact);
+        listData = findViewById(R.id.listData);
+        //判斷目前是否有資料並設定顯示元件，如果是0，就顯示「目前無資料」
+        if(dbAdapter.listContacts().getCount() == 0){
+            listData.setVisibility(View.INVISIBLE);
+            noContact.setVisibility(View.VISIBLE);
+        }else{
+            listData.setVisibility(View.VISIBLE);
+            noContact.setVisibility(View.INVISIBLE);
+        }
         displaylistView();
-
-
     }
 
-
     private void displaylistView(){
-        listData = findViewById(R.id.listData);
-        listData.setEmptyView(findViewById(R.id.noContact));
-        dbAdapter = new DbAdapter(this);
-        Cursor cursor = dbAdapter.listContacts();
-        String[] dataColumns = new String[]{
-                dbAdapter.KEY_NAME,
-                dbAdapter.KEY_ALARM
-        };
-        int[] viewColumns = new int[]{
-                R.id.txtName,
-                R.id.txtAlarm
-        };
-
-        //取得點下去當下的資料列
-        dataAdapter = new SimpleCursorAdapter(this,R.layout.item_view, cursor, dataColumns, viewColumns, 0);
+        Cursor cursor = dbAdapter.listContacts ();
+        dataAdapter = new ListAdapter(this, cursor);
         listData.setAdapter(dataAdapter);
         listData.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Cursor item_cursor = (Cursor) listData.getItemAtPosition(position);
-//                String item_id = item_cursor.getString(item_cursor.getColumnIndexOrThrow("_id"));
-                int item_id = item_cursor.getInt(item_cursor.getColumnIndexOrThrow("_id"));
-                Log.i("DBitem_id=",Integer.toString(item_id));
+                Cursor current_cursor = (Cursor) listData.getItemAtPosition(position);
+                int item_id = current_cursor.getInt(current_cursor.getColumnIndexOrThrow("_id"));
                 intent = new Intent();
-                intent.putExtra("item_id",item_id);
-                intent.setClass(MainActivity.this, ShowActivity.class );
+                intent.putExtra("item_id", item_id);
+                intent.putExtra("type","edit");
+                intent.setClass(MainActivity.this, EditActivity.class);
                 startActivity(intent);
             }
         });
@@ -86,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu,menu);
         return true;
-//        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

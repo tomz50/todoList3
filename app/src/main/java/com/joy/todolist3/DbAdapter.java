@@ -10,9 +10,11 @@ import android.widget.Toast;
 
 public class DbAdapter {
     public static final String KEY_ID = "_id";
+    public static final String KEY_DATE = "date";
     public static final String KEY_NAME = "name";
     public static final String KEY_ALARM = "alarm";
-    private static final String TABLE_NAME = "todoList1";
+    public static final String KEY_BGCOLOR = "bgcolor";
+    private static final String TABLE_NAME = "todoList2";
     private DbHelper mDbHelper;
     private SQLiteDatabase mdb;
     private final Context mCtx;
@@ -35,19 +37,23 @@ public class DbAdapter {
         }
     }
     public Cursor listContacts(){
-        Cursor mCursor = mdb.query(TABLE_NAME, new String[] {KEY_ID, KEY_NAME, KEY_ALARM},null,null,null,null,null);
+        Cursor mCursor = mdb.query(TABLE_NAME, new String[]{KEY_ID, KEY_DATE,KEY_NAME, KEY_ALARM, KEY_BGCOLOR},
+                null,null,null,null,null);
         if(mCursor != null){
             mCursor.moveToFirst();
         }
         return mCursor;
     }
 
-    public long createContacts(String name,String alarm) {
-        long rowsAffected = -1;
+    public long createContacts(String date, String name, String alarm, String bgcolor ){
+
+            long rowsAffected = -1;
         try{
             values = new ContentValues();
+            values.put(KEY_DATE, date);
             values.put(KEY_NAME, name);
             values.put(KEY_ALARM, alarm);
+            values.put(KEY_BGCOLOR, bgcolor);
 
             rowsAffected = mdb.insert(TABLE_NAME,null,values);
             Log.i("DB_Insert_rowsAffected", Long.toString(rowsAffected));
@@ -64,13 +70,14 @@ public class DbAdapter {
                 Toast.makeText(mCtx,"新增成功!", Toast.LENGTH_SHORT).show();
         }
     }
-
-    public long updateContacts(int id, String name, String alarm){
+    public long updateContacts(int id, String date, String name, String alarm, String bgcolor){
         long rowsAffected = 0;
         try{
              values = new ContentValues();
+             values.put(KEY_DATE, date);
              values.put(KEY_NAME, name);
              values.put(KEY_ALARM, alarm);
+             values.put(KEY_BGCOLOR, bgcolor);
 
              rowsAffected = mdb.update(TABLE_NAME, values, "_id=" + id,null);
              Log.i("DB_Update_rowsAffected", Long.toString(rowsAffected));
@@ -100,10 +107,9 @@ public class DbAdapter {
     }
 
     public Cursor queryById(int item_id){
-        Cursor mCursor = null;
 //        Log.i("DB_DbAdapter_queryByName",item_id);
-        mCursor = mdb.query(true, TABLE_NAME, new String[] {KEY_ID, KEY_NAME, KEY_ALARM},
-                KEY_ID + " = " +item_id, null, null, null, null, null);
+        Cursor mCursor = mdb.query(TABLE_NAME, new String[] {KEY_ID, KEY_DATE,KEY_NAME, KEY_ALARM, KEY_BGCOLOR},
+                KEY_ID + "=" + item_id, null, null, null, null, null);
 
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -111,5 +117,4 @@ public class DbAdapter {
 
         return mCursor;
     }
-
 }

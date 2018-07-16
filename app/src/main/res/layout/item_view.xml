@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -20,25 +21,29 @@
             app:srcCompat="@drawable/ic_48" />
 
         <LinearLayout
+            android:id="@+id/bg_memo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/txtName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="18sp" />
-
-            <TextView
                 android:id="@+id/txtAlarm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="2018-07-16"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="TextView"
-                android:textSize="18sp"
-                android:visibility="visible" />
+                android:textSize="18sp" />
+
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
